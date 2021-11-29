@@ -5,7 +5,7 @@ const app = express()
 app.get('/', (req,res) => res.send('API Running'))
 
 
-app.use('/api/token', require('./routes/api/token'))
+app.use('/api/honeytoken', require('./routes/api/honeytoken'))
 
 
 const PORT = process.env.PORT || 5000 

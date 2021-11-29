@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import honeytoken from './components/layout/honeytoken';
+import axios from 'axios'
 import './App.css';
 
 const App = () =>{
@@ -12,9 +12,24 @@ const App = () =>{
 
   const onChange = e => setFormData({...formData,[e.target.name]: e.target.value})
 
-  const onSubmit = e => {
-    e.preventDefault()
-    console.log(formData)    
+  const onSubmit = async e => {
+    const newUser = {
+      name,
+      email
+    }
+
+    try{
+      const config = {
+        headers:{
+          'Content-Type':'application/json'
+        } 
+      } 
+      const body = JSON.stringify(newUser)
+      const res = await axios.post('/api/honeytoken',body,config)
+      console.log(res.data);
+    }catch(err){
+      console.error(err.response.data);
+    }
   }
 
  return(
