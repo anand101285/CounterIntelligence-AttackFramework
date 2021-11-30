@@ -25,7 +25,9 @@ const App = () =>{
         } 
       } 
       const body = JSON.stringify(newUser)
-      const res = await axios.post('/api/honeytoken',body,config)
+
+      //not working check this
+      const res = await axios.post('/api/honeytoken')
       console.log(res.data);
     }catch(err){
       console.error(err.response.data);
@@ -34,7 +36,8 @@ const App = () =>{
 
  return(
     <Fragment>
-     <form className="box" onSubmit={e => onSubmit(e)}>
+      {/* local host is given in action parameter as port were used different */}
+     <form className="box" action="http://localhost:5000/api/honeytoken" method="POST">
        <h2>Generate Honey tokens</h2>
        <input type="text" name="name" value ={name} onChange = {e => onChange(e)} placeholder="Enter your name "></input>
        <input type="email" name="email" value ={email} onChange = {e => onChange(e)} placeholder="Enter your email"></input>

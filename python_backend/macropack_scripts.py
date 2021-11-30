@@ -15,7 +15,7 @@ def run_option(num):
 
     }
 
-    a = subprocess.run([cwd + '\\executable_scripts\\macro_pack.exe','-t EMBED_EXE --embed=c:\\windows\\system32\\calc.exe -o -G my_calc.doc'],shell=True)
+    a = subprocess.run([cwd + '\\executable_scripts\\macro_pack.exe',switch[1]],shell=True)
     print(a)
 
 run_option(2)
