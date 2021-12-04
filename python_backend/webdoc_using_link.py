@@ -3,15 +3,8 @@ import re
 import argparse
 import os
 cwd = os.path.realpath(__file__+'\\..\\')
-#creating a docx file normal one
-# doc = Document()
-#
-# doc.add_heading('Testing_doc',0)
-#
-#
-# doc.add_page_break()
-#
-# doc.save('test.docx')
+
+
 def generate(ip_port,session_id,documentname):
     url_to_ping=f'http://{ip_port}/api/honeytoken/'
 
