@@ -96,19 +96,22 @@ router.get('/',(req,res)=>{
 
 
   
-    let attacker_ip = req.socket.remoteAddress;
+    let attacker_ip = res.socket.remoteAddress;
 
   
     //filtering only the ip address
     attacker_ip =attacker_ip.replace('::ffff:',"");
-    let today =  new Date()
+    console.log(attacker_ip);
+
+    
+    // let today =  new Date()
   
-    //getting the current date
-    let currdate = today.getDate()+"/"+today.getMonth()+"/"+today.getFullYear();
+    // //getting the current date
+    // let currdate = today.getDate()+"/"+today.getMonth()+"/"+today.getFullYear();
   
-    //saving in the database
-    const attacker_detail = new attacker({ip:attacker_ip, date:currdate})
-    attacker_detail.save().then(()=>{console.log("attacker details added")})
+    // //saving in the database
+    // const attacker_detail = new attacker({ip:attacker_ip, date:currdate})
+    // attacker_detail.save().then(()=>{console.log("attacker details added")})
   
     res.end()
   

