@@ -104,14 +104,14 @@ router.get('/',(req,res)=>{
     console.log(attacker_ip);
 
     
-    // let today =  new Date()
+    let today =  new Date()
   
-    // //getting the current date
-    // let currdate = today.getDate()+"/"+today.getMonth()+"/"+today.getFullYear();
+    //getting the current date
+    let currdate = today.getDate()+"/"+today.getMonth()+"/"+today.getFullYear();
   
-    // //saving in the database
-    // const attacker_detail = new attacker({ip:attacker_ip, date:currdate})
-    // attacker_detail.save().then(()=>{console.log("attacker details added")})
+    //saving in the database
+    const attacker_detail = new attacker({ip:attacker_ip, date:currdate})
+    attacker_detail.save().then(()=>{console.log("attacker details added")})
   
     res.end()
   
