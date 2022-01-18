@@ -2,6 +2,7 @@ const mongoose =require('mongoose');
 
 const tokenobj =  new mongoose.Schema({
     type:String,
+    ext:String,
     created_at:{
         type:Date,
         required:true,

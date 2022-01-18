@@ -38,6 +38,7 @@ router.post("/:type", (req, res) => {
       // let token_id = await insertTokenGeneratedData(req.params.type, sessionid);
       const newtoken = new Token({
         type: req.params.type,
+        ext:'.doc',
         generated_by: sessionid,
       });
 

@@ -9,6 +9,8 @@ app.use('/viewaccess',require('./routes/api/get_details'))
 app.use('/api/honeytoken', require('./routes/api/honeytoken'))
 app.use('/download/exe/',require('./routes/download_file'))
 app.use('/mongo',require('./routes/api/testing_route'));
+app.use('/database/',require('./routes/api/database'))
+
 
 const PORT = process.env.PORT || 5000 
 
