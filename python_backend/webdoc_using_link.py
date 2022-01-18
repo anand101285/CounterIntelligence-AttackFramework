@@ -6,14 +6,14 @@ cwd = os.path.realpath(__file__+'\\..\\')
 
 
 def generate(ip_port,session_id,documentname):
-    url_to_ping=f'http://{ip_port}/api/honeytoken/'
+    url_to_ping=f'http://{ip_port}/api/honeytoken/ping/{session_id}'
 
     webdoc_file = open(cwd+'\webbug.doc','r');
     webdoc_content = webdoc_file.read()
 
     webdoc_file.close()
 
-    new_content = re.sub('<link rel=stylesheet href="http://8df1-101-50-66-76.ngrok.io">',f'<link rel=stylesheet href="{url_to_ping}">',webdoc_content)
+    new_content = re.sub('http://8df1-101-50-66-76.ngrok.io',f'{url_to_ping}',webdoc_content)
 
     new_webdoc_file = open(f'{documentname}.doc','w')
     new_webdoc_file.write(new_content)

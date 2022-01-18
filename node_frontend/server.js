@@ -8,7 +8,7 @@ app.use(cors())
 app.use('/viewaccess',require('./routes/api/get_details'))
 app.use('/api/honeytoken', require('./routes/api/honeytoken'))
 app.use('/download/exe/',require('./routes/download_file'))
-
+app.use('/mongo',require('./routes/api/testing_route'));
 
 const PORT = process.env.PORT || 5000 
 

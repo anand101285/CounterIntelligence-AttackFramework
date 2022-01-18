@@ -17,8 +17,6 @@ def create_xlsm_file(out_name):
 
 
 if __name__=='__main__':
-
-
     print("[+] Script started")
     parser = argparse.ArgumentParser()
     parser.add_argument('--file',help='enter the name of generated macro file')

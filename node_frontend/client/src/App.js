@@ -5,33 +5,19 @@ import FileDownload from 'js-file-download';
 
 
 const App = () =>{
-//   const [formData, setFormData] = useState({
-//     name:'',
-//     email:''
-//   })
 
-//   const {name,email} = formData
-
-//   const onChange = e => setFormData({...formData,[e.target.name]: e.target.value})
+  const [data,setData]=React.useState({sessionid:'61e677a8ae03a8557a2a3fcf'});
 
   const onSubmit = e => {
-   //  const newUser = {
-   //    name,
-   //    email
-   //  }
+   
 
     try{
-      // const config = {
-      //   headers:{
-      //     'Content-Type':'application/json'
-      //   } 
-      // } 
-      // const body = JSON.stringify(newUser)
-
+      console.log('sending')
       axios({
          url: 'http://localhost:5000/api/honeytoken/worddoc',
-         method: 'GET',
+         method: 'POST',
          responseType: 'blob', // important
+         data:JSON.stringify(data),
       }).then((response) => {
         console.log(response);
          FileDownload(response.data,"worddocument.doc")
@@ -48,7 +34,7 @@ const App = () =>{
 
       axios({
          url: 'http://localhost:5000/api/honeytoken/excel_vba',
-         method: 'GET',
+         method: 'POST',
          responseType: 'blob', // important
       }).then((response) => {
         console.log(response);
@@ -131,14 +117,6 @@ const App = () =>{
         </div>
        </div>
 
-      {/* local host is given in action parameter as port were used different
-     <form className="box" action="http://localhost:5000/api/honeytoken" method="POST">
-       <h2>Generate Honey tokens</h2>
-       <input type="text" name="name" value ={name} onChange = {e => onChange(e)} placeholder="Enter your name "></input>
-       <input type="email" name="email" value ={email} onChange = {e => onChange(e)} placeholder="Enter your email"></input>
-       <h2>You can download honey tokens below</h2>
-       <input type="submit" name="" value="Download"></input>
-      </form> */}
     </Fragment>
 )
 }
