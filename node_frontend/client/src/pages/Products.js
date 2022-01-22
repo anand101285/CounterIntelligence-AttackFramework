@@ -58,7 +58,8 @@ export default function EcommerceShop() {
       axios({
         url: 'http://localhost:5000/api/honeytoken/excel_vba',
         method: 'POST',
-        responseType: 'blob' // important
+        responseType: 'blob', // important
+        data: JSON.stringify(data)
       }).then((response) => {
         console.log(response);
         FileDownload(response.data, `${filename}.xlsm`);

