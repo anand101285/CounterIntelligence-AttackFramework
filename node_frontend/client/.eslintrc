@@ -57,15 +57,6 @@
         "ignoreRestSiblings": false
       }
     ],
-    "prettier/prettier": [
-      2,
-      {
-        "printWidth": 100,
-        "singleQuote": true,
-        "trailingComma": "none",
-        "tabWidth": 2,
-        "endOfLine": "auto"
-      }
-    ]
+    "prettier/prettier": ["error", { "endOfLine": "auto" }]
   }
 }

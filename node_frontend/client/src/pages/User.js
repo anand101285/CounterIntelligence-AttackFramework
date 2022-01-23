@@ -44,7 +44,7 @@ export default function User() {
 
   useEffect(() => {
     getTokendata();
-  });
+  }, []);
 
   return (
     <TableContainer component={Paper}>

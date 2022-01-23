@@ -15,10 +15,6 @@ const User = require("../../models/User");
 const Token = require("../../models/Tokens");
 const TokenAccess = require("../../models/TokenAccess");
 
-const insertTokenGeneratedData = async (type, sessionid) => {
-  let tokenid = 0;
-};
-
 router.post("/:type", (req, res) => {
   //getting the session id from front end user logged in
 
@@ -35,7 +31,7 @@ router.post("/:type", (req, res) => {
 
     if (req.params.type == "worddoc") {
       const current_ip = ip.address();
-      // let token_id = await insertTokenGeneratedData(req.params.type, sessionid);
+
       const newtoken = new Token({
         type: req.params.type,
         generated_by: sessionid,
@@ -53,7 +49,6 @@ router.post("/:type", (req, res) => {
                 console.log("[+] data inserted");
                 console.log(data);
                 try {
-                  var dataToSend;
                   let filename = "webbug_exploit";
 
                   const python = spawn("python", [
@@ -95,48 +90,75 @@ router.post("/:type", (req, res) => {
       });
     } else if (req.params.type == "excel_vba") {
       try {
-        const excel_vba = spawn("python", [
-          __dirname + "\\..\\..\\..\\python_backend\\xslm_macrogen.py",
-          "--file",
-          "my_macro",
-        ]);
-
-        //on execution
-        excel_vba.stdout.on("data", (data) => {
-          console.log("Pipe data from python script ...");
-          dataToSend = data.toString();
+        const current_ip = ip.address();
+        // let token_id = await insertTokenGeneratedData(req.params.type, sessionid);
+        const newtoken = new Token({
+          type: req.params.type,
+          generated_by: sessionid,
         });
 
-        //on error the message is displayed , python script was not findinf the proper directory
-        excel_vba.stderr.on("data", (data) => {
-          console.log(data.toString());
-        });
+        newtoken.save((err, doc) => {
+          if (err) console.log(err);
+          else {
+            User.findOneAndUpdate(
+              { _id: sessionid },
+              { $push: { tokens: doc._id } },
+              (err, doc) => {
+                if (err) console.log(err);
+                else {
+                  const excel_vba = spawn("python", [
+                    __dirname +
+                      "\\..\\..\\..\\python_backend\\xslm_macrogen.py",
+                    "--file",
+                    "my_macro",
+                    "--sessionid",
+                    doc._id,
+                    "--url",
+                    current_ip + ":5000",
+                  ]);
 
-        //on close of script
-        excel_vba.on("close", (code) => {
-          console.log(`child process close all stdio with code ${code}`);
-          res.download(
-            __dirname + "\\..\\..\\..\\python_backend\\mal_docs\\my_macro.xlsm"
-          );
-          insertTokenGeneratedData(req.params.type, sessionid);
+                  //on execution
+                  excel_vba.stdout.on("data", (data) => {
+                    console.log("Pipe data from python script ...");
+                    dataToSend = data.toString();
+                  });
+
+                  //on error the message is displayed , python script was not findinf the proper directory
+                  excel_vba.stderr.on("data", (data) => {
+                    console.log(data.toString());
+                  });
+
+                  //on close of script
+                  excel_vba.on("close", (code) => {
+                    console.log(
+                      `child process close all stdio with code ${code}`
+                    );
+                    res.download(
+                      __dirname +
+                        "\\..\\..\\..\\python_backend\\mal_docs\\my_macro.xlsm"
+                    );
+                  });
+                }
+              }
+            );
+          }
         });
       } catch (err) {
         console.log(err.message);
-        require.status(500).send("Server Error");
+        res.status(500).send("Server Error");
       }
     }
   });
 });
 
-//this route will recieve the request from document open and print its ip (TODO modify it)
+//this route will recieve the request from document open
 router.get("/ping/:tokenid", (req, res) => {
   let tokenid = req.params.tokenid;
-  console.log(tokenid);
+
   let attacker_ip = res.socket.remoteAddress;
 
-  //filtering only the ip address
+  // //filtering only the ip address
   attacker_ip = attacker_ip.replace("::ffff:", "");
-  console.log(attacker_ip);
 
   let today = new Date();
 
@@ -165,7 +187,8 @@ router.get("/ping/:tokenid", (req, res) => {
       });
     }
   });
-  res.end();
+
+  res.status(200).send();
 });
 
 module.exports = router;

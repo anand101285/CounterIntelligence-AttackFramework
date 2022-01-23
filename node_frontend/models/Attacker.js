@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const attackerobj = new mongoose.Schema({
-    ip:String,
-    date:String,
-    user_id:String,
-})
+  ip: String,
+  date: String,
+  user_id: String,
+});
 
-var attacker  = mongoose.model('Attacker',attackerobj);
+var attacker = mongoose.model("Attacker", attackerobj);
 
-module.exports = attacker
+module.exports = attacker;
