@@ -18,7 +18,7 @@ export default function User() {
     try {
       console.log('sending');
       axios({
-        url: 'http://localhost:5000/api/database/tokens/all',
+        url: 'http://localhost:5000/api/database/tokens/stats',
         method: 'GET'
       }).then((response) => {
         console.log(response.data);

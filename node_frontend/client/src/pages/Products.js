@@ -17,7 +17,6 @@ export default function EcommerceShop() {
   const auth = useContext(AuthContext);
   const [filetype, setfiletype] = useState('');
   const [filename, setfilename] = useState('');
-  console.log('this is my user id bro', auth.userId);
 
   const handleChange = (event) => {
     setfiletype(event.target.value);
