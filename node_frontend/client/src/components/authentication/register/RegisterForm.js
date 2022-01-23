@@ -1,5 +1,7 @@
-import * as Yup from 'yup';
+import axios from 'axios';
 import { useState } from 'react';
+
+import * as Yup from 'yup';
 import { Icon } from '@iconify/react';
 import { useFormik, Form, FormikProvider } from 'formik';
 import eyeFill from '@iconify/icons-eva/eye-fill';
@@ -22,7 +24,7 @@ export default function RegisterForm() {
       .required('First name required'),
     lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Last name required'),
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required')
+    password: Yup.string().min(6, 'Too Short!').required('Password is required')
   });
 
   const formik = useFormik({
@@ -33,12 +35,36 @@ export default function RegisterForm() {
       password: ''
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (values) => {
+      registerUser(values);
+      // navigate('/dashboard', { replace: true });
     }
   });
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
+
+  const registerUser = (values) => {
+    console.log(values);
+    try {
+      console.log('sending');
+      axios({
+        url: 'http://localhost:5000/api/users/',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: JSON.stringify({
+          firstname: values.firstName,
+          lastname: values.lastName,
+          email: values.email,
+          password: values.password
+        })
+      }).then((response) => {
+        console.log(response.data);
+        navigate('/dashboard', { status: { token: response.data }, replace: true });
+      });
+    } catch (err) {
+      console.error(err.response.data);
+    }
+  };
 
   return (
     <FormikProvider value={formik}>

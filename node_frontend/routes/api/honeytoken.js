@@ -30,7 +30,7 @@ router.post("/:type", (req, res) => {
     body += chunk;
   });
   req.on("end", async () => {
-    let jsonbody = JSON.parse(body);
+    let jsonbody = JSON.parse(body) ;
     sessionid = jsonbody.sessionid;
 
     if (req.params.type == "worddoc") {

@@ -20,7 +20,7 @@ const CHART_DATA = [
   },
   {
     name: 'Macro Embedded Tokens',
-    type: 'line',
+    type: 'area',
     data: [6, 10, 100, 30, 63, 57, 95, 50, 59, 118, 39]
   }
 ];
@@ -29,7 +29,7 @@ export default function AppWebsiteVisits() {
   const chartOptions = merge(BaseOptionChart(), {
     stroke: { width: [0, 2, 3] },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
-    fill: { type: ['solid', 'gradient', 'solid'] },
+    fill: { type: ['solid', 'gradient', 'gradient'] },
     labels: [
       '01/01/2022',
       '02/01/2022',

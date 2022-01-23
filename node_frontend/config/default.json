@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://cicaf2021:Counterintelligenceattack2021@cluster0.vscuv.mongodb.net/CounterAttackdb?retryWrites=true&w=majority",
+  "jwtSecret": "Hiddentoken"
+}

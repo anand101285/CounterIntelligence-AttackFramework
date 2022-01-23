@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Icon } from '@iconify/react';
-import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import FileDownload from 'js-file-download';
 
 // material
@@ -10,21 +9,15 @@ import word from '@iconify/icons-ant-design/file-word-outlined';
 import excel from '@iconify/icons-ant-design/file-excel-outlined';
 // components
 import Page from '../components/Page';
-import {
-  ProductSort,
-  ProductList,
-  ProductCartWidget,
-  ProductFilterSidebar
-} from '../components/_dashboard/products';
-//
-import PRODUCTS from '../_mocks_/products';
+import { AuthContext } from '../context/auth-context';
 
 // ----------------------------------------------------------------------
 
 export default function EcommerceShop() {
+  const auth = useContext(AuthContext);
   const [filetype, setfiletype] = useState('');
   const [filename, setfilename] = useState('');
-  const [data, setData] = useState({ sessionid: '61e677a8ae03a8557a2a3fcf' });
+  console.log('this is my user id bro', auth.userId);
 
   const handleChange = (event) => {
     setfiletype(event.target.value);
@@ -36,14 +29,14 @@ export default function EcommerceShop() {
     if (filetype === 'excel') onSubmitExcel();
   };
 
-  const onSubmitWord = (e) => {
+  const onSubmitWord = () => {
     try {
       console.log('sending');
       axios({
         url: 'http://localhost:5000/api/honeytoken/worddoc',
         method: 'POST',
         responseType: 'blob', // important
-        data: JSON.stringify(data)
+        data: JSON.stringify({ sessionid: auth.userId })
       }).then((response) => {
         console.log(response);
         FileDownload(response.data, `${filename}.doc`);
@@ -53,7 +46,7 @@ export default function EcommerceShop() {
     }
   };
 
-  const onSubmitExcel = (e) => {
+  const onSubmitExcel = () => {
     try {
       axios({
         url: 'http://localhost:5000/api/honeytoken/excel_vba',

@@ -1,52 +1,70 @@
-import { Icon } from '@iconify/react';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Style, Icon } from 'ol/style';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import { fromLonLat, get } from 'ol/proj';
+
 // material
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
+
+import Map from '../maps/Map';
+import { Layers, TileLayer, VectorLayer } from '../maps/Layers';
+import { osm, vector } from '../maps/Source';
+
+import mapConfig from '../maps/config.json';
+import '../maps/maps.css';
+
 // components
 import Page from '../components/Page';
-import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../components/_dashboard/blog';
-//
-import POSTS from '../_mocks_/blog';
 
-// ----------------------------------------------------------------------
-
-const SORT_OPTIONS = [
-  { value: 'latest', label: 'Latest' },
-  { value: 'popular', label: 'Popular' },
-  { value: 'oldest', label: 'Oldest' }
+const markersLonLat = [
+  [73.135, 31.4504],
+  [74.3587, 31.5204],
+  [70.9019, 31.8626]
 ];
+
+function addMarkers(lonLatArray) {
+  const iconStyle = new Style({
+    image: new Icon({
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      src: mapConfig.markerImage32
+    })
+  });
+  const features = lonLatArray.map((item) => {
+    const feature = new Feature({
+      geometry: new Point(fromLonLat(item))
+    });
+    feature.setStyle(iconStyle);
+    return feature;
+  });
+  return features;
+}
 
 // ----------------------------------------------------------------------
 
 export default function Blog() {
+  const [center, setCenter] = useState(mapConfig.center);
+  const [zoom, setZoom] = useState(5);
+
+  const [features, setFeatures] = useState(addMarkers(markersLonLat));
+
   return (
     <Page title="Dashboard: Blog | Minimal-UI">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Blog
+            Track Beacons
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
-            New Post
-          </Button>
         </Stack>
-
-        <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-          <BlogPostsSearch posts={POSTS} />
-          <BlogPostsSort options={SORT_OPTIONS} />
-        </Stack>
-
-        <Grid container spacing={3}>
-          {POSTS.map((post, index) => (
-            <BlogPostCard key={post.id} post={post} index={index} />
-          ))}
-        </Grid>
+        <div>
+          <Map center={fromLonLat(center)} zoom={zoom}>
+            <Layers>
+              <TileLayer source={osm()} zIndex={0} />
+              <VectorLayer source={vector({ features })} />
+            </Layers>
+          </Map>
+        </div>
       </Container>
     </Page>
   );

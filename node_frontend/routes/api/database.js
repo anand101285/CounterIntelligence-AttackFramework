@@ -20,8 +20,10 @@ router.get("/tokenaccess/count", (req, res) => {
   });
 });
 
-router.get("/tokens/all", (req, res) => { 
-  Token.find({}, (err, doc) => {
+router.get("/tokens/:uid", (req, res) => {
+  const userid = req.params.uid;
+  console.log("this is the stupid userid ", userid);
+  Token.find({ generated_by: userid }, (err, doc) => {
     res.json(doc);
   });
 });

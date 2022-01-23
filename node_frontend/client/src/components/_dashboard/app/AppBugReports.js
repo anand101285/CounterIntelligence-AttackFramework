@@ -1,10 +1,10 @@
+import PropTypes from 'prop-types';
+
 import { Icon } from '@iconify/react';
 import caution from '@iconify/icons-ant-design/exception-outlined';
 // material
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
-// utils
-import { fShortenNumber } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
@@ -40,19 +40,21 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // const TOTAL = 12;
 
-export default function AppBugReports({ num }) {
-  const numOfaccess = num.num_of_access;
-  console.log('im hrere bhfuidhsauf', numOfaccess);
-  return (
-    <RootStyle>
-      <IconWrapperStyle>
-        <Icon icon={caution} width={24} height={24} />
-      </IconWrapperStyle>
-      <Typography variant="h3">{fShortenNumber(numOfaccess)}</Typography>
+const AppBugReports = ({ num }) => (
+  <RootStyle>
+    <IconWrapperStyle>
+      <Icon icon={caution} width={24} height={24} />
+    </IconWrapperStyle>
+    <Typography variant="h3">{num}</Typography>
 
-      <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
-        Compromised Beacons
-      </Typography>
-    </RootStyle>
-  );
-}
+    <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
+      Compromised Beacons
+    </Typography>
+  </RootStyle>
+);
+
+AppBugReports.propTypes = {
+  num: PropTypes.number
+};
+
+export default AppBugReports;

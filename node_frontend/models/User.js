@@ -1,7 +1,7 @@
 const mongoose =  require('mongoose');
 
 const userobj =  new mongoose.Schema({
-   name:String,
+   fname:String,
    age:Number,
    email:String,
    tokens:[

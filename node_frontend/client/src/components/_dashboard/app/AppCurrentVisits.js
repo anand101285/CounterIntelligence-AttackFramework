@@ -31,9 +31,8 @@ const ChartWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const CHART_DATA = [10, 40];
-
-export default function AppCurrentVisits() {
+export default function AppCurrentVisits({ docx, excel }) {
+  const CHART_DATA = [docx, excel];
   const theme = useTheme();
 
   const chartOptions = merge(BaseOptionChart(), {

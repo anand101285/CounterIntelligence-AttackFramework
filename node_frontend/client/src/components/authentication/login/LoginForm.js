@@ -1,5 +1,7 @@
+import axios from 'axios';
+import { useState, useContext } from 'react';
+
 import * as Yup from 'yup';
-import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
@@ -17,9 +19,13 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
+import { AuthContext } from '../../../context/auth-context';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
+  const auth = useContext(AuthContext);
+  // const [isLoginMode, setIsLoginMode] = useState(true);
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -35,7 +41,8 @@ export default function LoginForm() {
       remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
+    onSubmit: (values) => {
+      loginUser(values);
       navigate('/dashboard', { replace: true });
     }
   });
@@ -44,6 +51,28 @@ export default function LoginForm() {
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
+  };
+
+  const loginUser = (values) => {
+    console.log(values);
+    try {
+      console.log('sending');
+      axios({
+        url: 'http://localhost:5000/api/auth',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: JSON.stringify({
+          email: values.email,
+          password: values.password
+        })
+      }).then((response) => {
+        console.log(response.data);
+        auth.login(response.data.userId, response.data.token);
+        // navigate('/dashboard', { status: { token: response.data }, replace: true });
+      });
+    } catch (err) {
+      console.error(err.response.data);
+    }
   };
 
   return (
