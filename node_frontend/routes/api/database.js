@@ -68,7 +68,7 @@ router.get("/token/attacks", (req, res) => {
       docs.map(async (data) => {
         let ax_res;
         ax_res = await axios({
-          // url: `http://api.ipstack.com/${data.ip}?access_key=160b18bca9c1dfe3ef4b629f61c79f7e`,
+          url: `http://api.ipstack.com/${data.ip}?access_key=47e46ab9f1e6a1b80cde1e650c7af9c0`,
           method: "GET",
         });
         ips.push([ax_res.data.longitude, ax_res.data.latitude]);

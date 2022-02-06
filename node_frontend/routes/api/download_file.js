@@ -7,6 +7,6 @@ router.get("/:session/test.exe", (req, res) => {
 });
 
 router.get("/persistant_ping.exe", (req, res) => {
-  res.download("./to_download/persistant_ping.exe");
+  res.download("./to_download_excel/test.exe");
 });
 module.exports = router;

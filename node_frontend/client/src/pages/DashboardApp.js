@@ -45,7 +45,7 @@ export default function DashboardApp() {
       // console.log(comp);
     } catch (err) {
       setisLoading(false);
-      console.error(err.response.data);
+      // console.error(err.response.data);
     }
   };
 

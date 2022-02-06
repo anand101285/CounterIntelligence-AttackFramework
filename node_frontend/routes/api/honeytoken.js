@@ -14,7 +14,12 @@ mongoose.connect(url_db, (err) => {
 const User = require("../../models/User");
 const Token = require("../../models/Tokens");
 const TokenAccess = require("../../models/TokenAccess");
+const serverdata = require("./serverConfig");
+const serverip = serverdata.url_toping;
 
+router.get("/testingsite", (req, res) => {
+  console.log(serverip);
+});
 router.post("/:type", (req, res) => {
   //getting the session id from front end user logged in
 
@@ -26,11 +31,11 @@ router.post("/:type", (req, res) => {
     body += chunk;
   });
   req.on("end", async () => {
-    let jsonbody = JSON.parse(body) ;
+    let jsonbody = JSON.parse(body);
     sessionid = jsonbody.sessionid;
 
     if (req.params.type == "worddoc") {
-      const current_ip = ip.address();
+      const current_ip = serverip;
 
       const newtoken = new Token({
         type: req.params.type,
@@ -55,7 +60,7 @@ router.post("/:type", (req, res) => {
                     __dirname +
                       "\\..\\..\\..\\python_backend\\webdoc_using_link.py",
                     "--url",
-                    current_ip + ":5000",
+                    current_ip,
                     "--sessionid",
                     doc._id,
                     "--docname",
@@ -114,7 +119,7 @@ router.post("/:type", (req, res) => {
                     "--sessionid",
                     doc._id,
                     "--url",
-                    current_ip + ":5000",
+                    serverip,
                   ]);
 
                   //on execution
@@ -155,9 +160,11 @@ router.post("/:type", (req, res) => {
 router.get("/ping/:tokenid", (req, res) => {
   let tokenid = req.params.tokenid;
 
-  let attacker_ip = res.socket.remoteAddress;
+  let attacker_ip = req.headers["x-forwarded-for"];
 
-  // //filtering only the ip address
+  console.log(attacker_ip);
+
+  //filtering only the ip address
   attacker_ip = attacker_ip.replace("::ffff:", "");
 
   let today = new Date();
