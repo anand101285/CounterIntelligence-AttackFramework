@@ -6,25 +6,6 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const { check, validationResult } = require("express-validator");
 
-// TokenAccess.aggregate([
-//   {
-//     $lookup: {
-//       from: "Token",
-//       let: { _id: "$userid" },
-//       pipeline: [
-//         {
-//           $match: {
-//             $expr: {
-//               $eq: ["$_id", "$token_id"],
-//             },
-//           },
-//         },
-//       ],
-//       as: "accessed",
-//     },
-//   },
-// ]);
-
 const Users = require("../../models/Users");
 //@route GEt api/auth
 // @description Test route

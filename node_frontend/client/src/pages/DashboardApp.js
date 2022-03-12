@@ -18,9 +18,10 @@ import { AuthContext } from '../context/auth-context';
 export default function DashboardApp() {
   const [comp, setcomp] = useState('');
   const [accessed, setaccessed] = useState('');
+  const [generated, setgenerated] = useState('');
   const [isLoading, setisLoading] = useState(false);
-  // const [docx, setdocx] = useState(0);
-  // const [xlsm, setexcel] = useState(0);
+  const [docx, setdocx] = useState(0);
+  const [xlsm, setexcel] = useState(0);
 
   const auth = useContext(AuthContext);
   console.log('this is my userid', auth.userId);
@@ -28,7 +29,8 @@ export default function DashboardApp() {
 
   useEffect(() => {
     getComp();
-    // getaccessed();
+    // getgenerated();
+    getaccessed();
   }, [userId]);
 
   const getComp = async () => {
@@ -45,35 +47,70 @@ export default function DashboardApp() {
       // console.log(comp);
     } catch (err) {
       setisLoading(false);
-      console.error(err.response.data);
+      console.error(err);
     }
   };
+
+  const getaccessed = async () => {
+    setisLoading(true);
+    try {
+      console.log('sending accessed request ');
+      const response = await axios({
+        url: `http://localhost:5000/api/database/token/generated/${userId}`,
+        method: 'GET'
+      });
+      console.log('accessed', response.data);
+      setaccessed(response.data.num_of_access);
+      setisLoading(false);
+    } catch (err) {
+      setisLoading(false);
+      console.error(err);
+    }
+  };
+
+  // const getgenerated = async () => {
+  //   console.log('Hello there');
+  //   setisLoading(true);
+  //   try {
+  //     console.log('sending');
+  //     const GeneratedToken = await axios({
+  //       url: `http://localhost:5000/api/database/token/generated/${userId}`,
+  //       method: 'GET'
+  //     });
+  //     console.log('I am here !!!!');
+  //     console.log('generated', GeneratedToken.data);
+  //     setgenerated(GeneratedToken.data);
+  //     setisLoading(false);
+  //   } catch (err) {
+  //     setisLoading(false);
+  //     console.error(err);
+  //   }
+  // };
 
   // const getaccessed = async () => {
   //   setisLoading(true);
   //   try {
-  //     console.log('sending');
+  //     console.log('sending accessed request ');
   //     const response = await axios({
-  //       url: `http://localhost:5000/api/database/token/compromised/${userId}`,
+  //       url: `http://localhost:5000/api/database/tokenaccess/count`,
   //       method: 'GET'
   //     });
   //     console.log('accessed', response.data);
-  //     setaccessed(response.data);
+  //     setaccessed(response.data.num_of_access);
   //     setisLoading(false);
-  //     // console.log(comp);
   //   } catch (err) {
   //     setisLoading(false);
-  //     console.error(err.response.data);
+  //     console.error(err);
   //   }
   // };
 
-  // const setdocsState = () => {
-  //   setdocx(comp.docx);
-  // };
+  const setdocsState = () => {
+    setdocx(comp.docx);
+  };
 
-  // const setexcelState = () => {
-  //   setexcel(comp.xlsm);
-  // };
+  const setexcelState = () => {
+    setexcel(comp.xlsm);
+  };
 
   return (
     <Page title="Dashboard | Minimal-UI">
@@ -92,7 +129,7 @@ export default function DashboardApp() {
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <AppBugReports num={accessed.total || 0} />
+              <AppBugReports num={accessed || 0} />
             </Grid>
             <Grid item xs={12} md={6} lg={8}>
               <AppConversionRates />

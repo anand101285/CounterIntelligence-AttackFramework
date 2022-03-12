@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import moment from 'moment';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,39 +9,70 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import { AuthContext } from '../context/auth-context';
 // ----------------------------------------------------------------------
 
 export default function User() {
   const [tokendata, settokendata] = useState([]);
   const dataArray = [];
 
-  const getTokendata = () => {
+  const auth = useContext(AuthContext);
+  console.log('this is my userid', auth.userId);
+  const { userId } = auth;
+
+  const getTokendata = async () => {
     try {
       console.log('sending');
-      axios({
-        url: 'http://localhost:5000/api/database/tokens/stats',
+      const response = await axios({
+        url: `http://localhost:5000/api/database/tokens/${userId}`,
         method: 'GET'
-      }).then((response) => {
-        console.log(response.data);
-        response.data.map((data) => {
-          const { type, ext, createdAt } = data;
-          dataArray.push({
-            name: 'Worddoc',
-            type,
-            ext,
-            date: createdAt,
-            UploadedOn: createdAt,
-            accessed: 'Accessed'
-          });
-          return 0;
-        });
-        settokendata(dataArray);
-        // console.log(comp);
       });
+      // console.log(response.dataid);
+      response.data.map((data) => {
+        // const { id, type, ext, createdAt } = data;
+        // dataArray.push({
+        //   id,
+        //   type,
+        //   ext,
+        //   date: createdAt,
+        //   UploadedOn: createdAt,
+        //   accessed: 'Accessed'
+        // });
+        console.log('token id is ', data.created_at);
+        return 0;
+      });
+      settokendata(response.data);
     } catch (err) {
-      console.error(err.response.data);
+      console.error(err);
     }
   };
+
+  // const getTokendata = async () => {
+  //   try {
+  //     console.log('sending');
+  //     axios({
+  //       url: `http://localhost:5000/api/database/tokens/${userId}`,
+  //       method: 'GET'
+  //     }).then((response) => {
+  //       console.log(response.data);
+  //       response.data.map((data) => {
+  //         const { type, ext, createdAt } = data;
+  //         dataArray.push({
+  //           name: 'Worddoc',
+  //           type,
+  //           ext,
+  //           date: createdAt,
+  //           UploadedOn: createdAt,
+  //           accessed: 'Accessed'
+  //         });
+  //         return 0;
+  //       });
+  //       settokendata(dataArray);
+  //     });
+  //   } catch (err) {
+  //     console.error(err.response.data);
+  //   }
+  // };
 
   useEffect(() => {
     getTokendata();
@@ -51,23 +83,25 @@ export default function User() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Tokenid</TableCell>
             <TableCell align="right">File Type</TableCell>
             <TableCell align="right">Extension</TableCell>
             <TableCell align="right">Uploaded on</TableCell>
-            <TableCell align="right">Compromised</TableCell>
+            {/* <TableCell align="right">Compromised</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
           {tokendata.map((data) => (
-            <TableRow key={data.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <TableRow key={data._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
-                {data.name}
+                {data._id}
               </TableCell>
               <TableCell align="right">{data.type}</TableCell>
-              <TableCell align="right">{data.ext}</TableCell>
-              <TableCell align="right">{data.UploadedOn}</TableCell>
-              <TableCell align="right">{data.accessed}</TableCell>
+              <TableCell align="right">{data.type === 'worddoc' ? '.docx' : '.xml'}</TableCell>
+              <TableCell align="right">
+                {moment(data.created_at).format('YYYY-MM-DD HH:mm')}
+              </TableCell>
+              {/* <TableCell align="right">{data.accessed}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>

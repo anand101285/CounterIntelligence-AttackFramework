@@ -21,11 +21,14 @@ router.get("/tokenaccess/count", (req, res) => {
   });
 });
 
-router.get("/tokens/:uid", (req, res) => {
+router.get("/tokens/:uid", async (req, res) => {
   const userid = req.params.uid;
-  Token.find({ generated_by: userid }, (err, doc) => {
-    res.json(doc);
-  });
+  try {
+    const data = await Token.find({ generated_by: userid });
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 router.get("/tokens/stats/:uid", (req, res) => {
@@ -41,25 +44,60 @@ router.get("/tokens/stats/:uid", (req, res) => {
   });
 });
 
-router.get("/token/compromised/:uid", (req, res) => {
+// router.get("/token/generated/:uid", (req, res) => {
+//   const userid = req.params.uid;
+//   const tokenid = [];
+//   let accessed;
+//   Token.find({ generated_by: userid }, async (err, doc) => {
+//     doc.map((data) => {
+//       tokenid.push(data.id);
+//     });
+//     tokenid.map((data) => {
+//       console.log(data);
+//       TokenAccess.find({ token_id: data }, async (err, docs) => {
+//         console.log("found the token here", data);
+//         console.log("this is the stupid token access id");
+//         accessed = accessed + 1;
+//         console.log("hello this is me ", accessed);
+//         res.send(accessed);
+//       });
+//     });
+//     res.send(accessed);
+//   });
+// });
+
+router.get("/token/generated/:uid", async (req, res) => {
   const userid = req.params.uid;
-  let tokenid = [];
   let accessed = 0;
-  Token.find({ generated_by: userid }, async (err, doc) => {
-    doc.map((data) => {
-      tokenid.push(data.token_id);
-    });
-  });
-  tokenid.map((data) => {
-    TokenAccess.find({ token_id: data }, (err, docs) => {
-      docs.map((data) => {
-        accessed = accessed + 1;
-        console.log("hello this is me ", accessed);
-      });
-      res.send(accessed);
-    }).clone();
-  });
+  try {
+    const tokenid = await Token.find({ generated_by: userid });
+    Promise.all(
+      tokenid.map(async (data) => {
+        const token = await TokenAccess.findOne({ token_id: data.id });
+        if (token != null) accessed += 1;
+      })
+    ).then((result) => res.send({ num_of_access: accessed }));
+  } catch (err) {
+    console.log(err);
+  }
 });
+
+// router.get("/token/compromised/:tokenid", (req, res) => {
+//   const tokenid = req.params.tokenid;
+//   let accessed = 0;
+//   console.log("this is the array", tokenid);
+//   tokenid.map((data) => {
+//     TokenAccess.find({ token_id: data }, (err, docs) => {
+//       console.log("There you are saber");
+//       docs.map((data) => {
+//         console.log("this is the stupid token access id");
+//         accessed = accessed + 1;
+//         console.log("hello this is me ", accessed);
+//       });
+//       res.send(accessed);
+//     });
+//   });
+// });
 
 router.get("/token/attacks", (req, res) => {
   let ips = [];
