@@ -30,14 +30,12 @@ export default function EcommerceShop() {
 
   const onSubmitWord = () => {
     try {
-      console.log('sending');
       axios({
         url: 'http://localhost:5000/api/honeytoken/worddoc',
         method: 'POST',
         responseType: 'blob', // important
         data: JSON.stringify({ sessionid: auth.userId })
       }).then((response) => {
-        console.log(response);
         FileDownload(response.data, `${filename}.doc`);
       });
     } catch (err) {

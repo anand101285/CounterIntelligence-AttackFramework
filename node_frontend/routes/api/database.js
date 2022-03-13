@@ -31,17 +31,20 @@ router.get("/tokens/:uid", async (req, res) => {
   }
 });
 
-router.get("/tokens/stats/:uid", (req, res) => {
+router.get("/tokens/stats/:uid", async (req, res) => {
   const userid = req.params.uid;
-  Token.find({ generated_by: userid }, (err, doc) => {
-    let word = 0;
-    let excel = 0;
-    Promise.all(
-      doc.map((data) => {
-        data.type === "worddoc" ? (word += 1) : (excel += 1);
-      })
-    ).then((result) => res.send({ docx: word, xlsm: excel }));
-  });
+  let word = 0;
+  let excel = 0;
+  try {
+    const tokendata = await Token.find({ generated_by: userid });
+    console.log(tokendata);
+    tokendata.map((data) => {
+      data.type === "worddoc" ? (word += 1) : (excel += 1);
+    });
+    res.send({ docx: word, xlsm: excel });
+  } catch (err) {
+    console.log("this an error from /tokens/stats/uid", err);
+  }
 });
 
 // router.get("/token/generated/:uid", (req, res) => {
@@ -78,7 +81,26 @@ router.get("/token/generated/:uid", async (req, res) => {
       })
     ).then((result) => res.send({ num_of_access: accessed }));
   } catch (err) {
-    console.log(err);
+    console.log("error from /token/generated/uid", err);
+  }
+});
+
+router.get("/token/compromised/:uid", async (req, res) => {
+  const userid = req.params.uid;
+  let accessed = [];
+  try {
+    const tokenid = await Token.find({ generated_by: userid });
+    Promise.all(
+      tokenid.map(async (data) => {
+        const token = await TokenAccess.findOne({ token_id: data.id });
+        if (token != null) {
+          accessed.push(token.id);
+          console.log("the id here", token.id);
+        }
+      })
+    ).then((result) => res.send(accessed));
+  } catch (err) {
+    console.log("error from /token/compromised/uid", err);
   }
 });
 

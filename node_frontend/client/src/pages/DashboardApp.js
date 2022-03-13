@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 // material
 import { Box, Grid, Container, Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 // components
 import Page from '../components/Page';
 import {
@@ -24,49 +25,43 @@ export default function DashboardApp() {
   const [xlsm, setexcel] = useState(0);
 
   const auth = useContext(AuthContext);
-  console.log('this is my userid', auth.userId);
   const { userId } = auth;
 
   useEffect(() => {
-    getComp();
+    gettokendata();
     // getgenerated();
-    getaccessed();
+    // getaccessed();
   }, [userId]);
 
-  const getComp = async () => {
+  const gettokendata = async () => {
     setisLoading(true);
     try {
-      console.log('sending');
-      const response = await axios({
+      const tokens = await axios({
         url: `http://localhost:5000/api/database/tokens/stats/${userId}`,
         method: 'GET'
       });
-      console.log(response.data);
-      setcomp(response.data);
-      setisLoading(false);
-      // console.log(comp);
-    } catch (err) {
-      setisLoading(false);
-      console.error(err);
-    }
-  };
-
-  const getaccessed = async () => {
-    setisLoading(true);
-    try {
-      console.log('sending accessed request ');
-      const response = await axios({
+      setcomp(tokens.data);
+      const compromised = await axios({
         url: `http://localhost:5000/api/database/token/generated/${userId}`,
         method: 'GET'
       });
-      console.log('accessed', response.data);
-      setaccessed(response.data.num_of_access);
+      setaccessed(compromised.data.num_of_access);
       setisLoading(false);
     } catch (err) {
       setisLoading(false);
-      console.error(err);
     }
   };
+
+  // const getaccessed = async () => {
+  //   setisLoading(true);
+  //   try {
+
+  //     setisLoading(false);
+  //   } catch (err) {
+  //     setisLoading(false);
+  //     console.error(err);
+  //   }
+  // };
 
   // const getgenerated = async () => {
   //   console.log('Hello there');
@@ -118,6 +113,21 @@ export default function DashboardApp() {
         <Box sx={{ pb: 5 }}>
           <Typography variant="h4">Hi, Welcome back</Typography>
         </Box>
+        {isLoading === true && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center'
+              // alignItems: 'center'
+              // alignContent: 'center'
+            }}
+          >
+            <CircularProgress size={55} thickness={3} />
+            <Typography variant="h6" sx={{ mt: 8, ml: -8 }}>
+              Loading...
+            </Typography>
+          </Box>
+        )}
         {isLoading === false && (
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>

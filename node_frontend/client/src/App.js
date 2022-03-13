@@ -15,8 +15,6 @@ import { useAuth } from './hooks/auth-hook';
 
 export default function App() {
   const { token, login, logout, userId } = useAuth();
-  console.log('token is ', token);
-  console.log('the user id is', userId);
   return (
     <ThemeConfig>
       <ScrollToTop />

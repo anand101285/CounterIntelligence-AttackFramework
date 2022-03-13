@@ -24,7 +24,7 @@ import { AuthContext } from '../../../context/auth-context';
 
 export default function LoginForm() {
   const auth = useContext(AuthContext);
-  // const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isLoginMode, setIsLoginMode] = useState(true);
 
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -54,9 +54,7 @@ export default function LoginForm() {
   };
 
   const loginUser = (values) => {
-    console.log(values);
     try {
-      console.log('sending');
       axios({
         url: 'http://localhost:5000/api/auth',
         method: 'POST',
@@ -66,7 +64,6 @@ export default function LoginForm() {
           password: values.password
         })
       }).then((response) => {
-        console.log(response.data);
         auth.login(response.data.userId, response.data.token);
         // navigate('/dashboard', { status: { token: response.data }, replace: true });
       });
