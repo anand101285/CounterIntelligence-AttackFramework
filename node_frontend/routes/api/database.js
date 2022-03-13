@@ -25,6 +25,7 @@ router.get("/tokens/:uid", async (req, res) => {
   const userid = req.params.uid;
   try {
     const data = await Token.find({ generated_by: userid });
+    console.log(data);
     res.send(data);
   } catch (err) {
     console.log(err);
@@ -94,7 +95,7 @@ router.get("/token/compromised/:uid", async (req, res) => {
       tokenid.map(async (data) => {
         const token = await TokenAccess.findOne({ token_id: data.id });
         if (token != null) {
-          accessed.push(token.id);
+          accessed.push(token.token_id);
           console.log("the id here", token.id);
         }
       })

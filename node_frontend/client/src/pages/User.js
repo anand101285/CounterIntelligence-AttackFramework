@@ -19,10 +19,11 @@ export default function User() {
   const [accessed, setaccessed] = useState([]);
   const [isLoading, setisLoading] = useState(false);
 
-  const dataArray = [];
+  const [dataArray, setdataArray] = useState([]);
 
   const auth = useContext(AuthContext);
   const { userId } = auth;
+  console.log(userId);
 
   const getTokendata = async () => {
     try {
@@ -31,26 +32,46 @@ export default function User() {
         url: `http://localhost:5000/api/database/tokens/${userId}`,
         method: 'GET'
       });
-      // console.log(response.dataid);
-      // response.data.map((data) => {
-      // const { id, type, ext, createdAt } = data;
-      // dataArray.push({
-      //   id,
-      //   type,
-      //   ext,
-      //   date: createdAt,
-      //   UploadedOn: createdAt,
-      //   accessed: 'Accessed'
-      // });
-      // console.log('token id is ', data.created_at);
-      // return 0;
-      // });
       settokendata(response.data);
+      console.log('after settoken ', response.data);
       const compromised = await axios({
         url: `http://localhost:5000/api/database/token/compromised/${userId}`,
         method: 'GET'
       });
       setaccessed(compromised.data);
+      console.log('after compromised ', compromised.data);
+
+      let id;
+      let type;
+      let ext;
+      let date;
+      let access;
+      const data1 = [];
+
+      Promise.all(
+        await tokendata.map((data) => {
+          console.log(data);
+          id = data._id;
+          type = data.type;
+          if (type === 'worddoc') ext = '.docs';
+          else ext = '.xmle';
+          date = data.created_at;
+          for (let i = 0; i < accessed.length; i += 1) {
+            console.log('id:', id, ' acc:', accessed[i]);
+            if (id === accessed[i]) access = 'Accessed';
+            else access = 'Not Accessed';
+          }
+
+          data1.push({ id, type, ext, date, access });
+
+          console.log(id, type, ext, date, access);
+          // console.log(dataArray);
+          return 0;
+        })
+      ).then(() => {
+        setdataArray(data1);
+      });
+
       setisLoading(false);
     } catch (err) {
       console.error(err);
@@ -85,40 +106,19 @@ export default function User() {
   //   }
   // };
 
-  const data = () => {
-    console.log('I fucking hate this?');
-    let id;
-    let type;
-    let ext;
-    let date;
-    let access;
-    tokendata.map((data) => {
-      console.log(data);
-      id = data._id;
-      type = data.type;
-      if (type === 'worddoc') ext = '.docs';
-      else ext = '.xmle';
-      date = data.created_at;
-      for (let i = 0; i < accessed.length; i += 1) {
-        console.log('id:', id, ' acc:', accessed[i]);
-        if (id === accessed[i]) access = 'Accessed';
-        else access = 'Not Accessed';
-      }
-      if (access === 'Accessed') {
-        dataArray.push({ id, type, ext, date, access });
-        console.log(id, type, ext, date, access);
-      }
-      // console.log(dataArray);
-      return 0;
-    });
-  };
+  // const data = () => {
+
+  // };
 
   useEffect(() => {
     getTokendata();
     console.log('hello i am here?');
-    data();
+    // data();
   }, [userId]);
 
+  useEffect(() => {
+    console.log('datarr ', dataArray);
+  }, [dataArray]);
   return (
     <>
       {isLoading === true && (
@@ -151,7 +151,7 @@ export default function User() {
             </TableHead>
             <TableBody>
               {dataArray.map((data) => (
-                <TableRow key={data._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableRow key={data.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row">
                     {data.id}
                   </TableCell>
