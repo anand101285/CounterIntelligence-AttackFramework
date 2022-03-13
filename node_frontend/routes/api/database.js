@@ -94,8 +94,11 @@ router.get("/token/compromised/:uid", async (req, res) => {
       tokenid.map(async (data) => {
         const token = await TokenAccess.findOne({ token_id: data.id });
         if (token != null) {
-          accessed.push(token.id);
-          console.log("the id here", token.id);
+          const ip = await Attacker.findOne({ _id: token.accessed_by });
+          if (ip != null) {
+            accessed.push({ token_id: token.token_id, ip: ip.ip });
+            console.log("the id here", token.id, " IP here", ip.ip);
+          }
         }
       })
     ).then((result) => res.send(accessed));

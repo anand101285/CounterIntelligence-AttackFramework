@@ -18,7 +18,7 @@ export default function User() {
   const [tokendata, settokendata] = useState([]);
   const [accessed, setaccessed] = useState([]);
   const [isLoading, setisLoading] = useState(false);
-
+  const [tableData, settableData] = useState([]);
   const dataArray = [];
 
   const auth = useContext(AuthContext);
@@ -31,26 +31,15 @@ export default function User() {
         url: `http://localhost:5000/api/database/tokens/${userId}`,
         method: 'GET'
       });
-      // console.log(response.dataid);
-      // response.data.map((data) => {
-      // const { id, type, ext, createdAt } = data;
-      // dataArray.push({
-      //   id,
-      //   type,
-      //   ext,
-      //   date: createdAt,
-      //   UploadedOn: createdAt,
-      //   accessed: 'Accessed'
-      // });
-      // console.log('token id is ', data.created_at);
-      // return 0;
-      // });
+
       settokendata(response.data);
+      console.log('token:  ', response.data);
       const compromised = await axios({
         url: `http://localhost:5000/api/database/token/compromised/${userId}`,
         method: 'GET'
       });
       setaccessed(compromised.data);
+      console.log('accessed:  ', compromised.data);
       setisLoading(false);
     } catch (err) {
       console.error(err);
@@ -86,39 +75,50 @@ export default function User() {
   // };
 
   const data = () => {
-    console.log('I fucking hate this?');
     let id;
     let type;
     let ext;
     let date;
     let access;
-    tokendata.map((data) => {
-      console.log(data);
-      id = data._id;
-      type = data.type;
-      if (type === 'worddoc') ext = '.docs';
-      else ext = '.xmle';
-      date = data.created_at;
-      for (let i = 0; i < accessed.length; i += 1) {
-        console.log('id:', id, ' acc:', accessed[i]);
-        if (id === accessed[i]) access = 'Accessed';
-        else access = 'Not Accessed';
-      }
-      if (access === 'Accessed') {
-        dataArray.push({ id, type, ext, date, access });
-        console.log(id, type, ext, date, access);
-      }
-      // console.log(dataArray);
-      return 0;
+    let ip;
+    Promise.all(
+      tokendata.map(async (data) => {
+        console.log(data);
+        id = data._id;
+        type = data.type;
+        if (type === 'worddoc') ext = '.docs';
+        else ext = '.xmle';
+        date = data.created_at;
+        for (let i = 0; i < accessed.length; i += 1) {
+          console.log('id:', id, ' acc:', accessed[i].token_id);
+          if (id === accessed[i].token_id) {
+            access = 'Accessed';
+            ip = accessed[i].ip;
+            break;
+          } else {
+            access = 'Not Accessed';
+            ip = '-';
+          }
+        }
+
+        dataArray.push({ id, type, ext, date, access, ip });
+        console.log(id, type, ext, date, access, ip);
+        // console.log(dataArray);
+        return 0;
+      })
+    ).then((re) => {
+      settableData(dataArray);
     });
   };
 
   useEffect(() => {
     getTokendata();
     console.log('hello i am here?');
-    data();
   }, [userId]);
 
+  useEffect(() => {
+    data();
+  }, [accessed]);
   return (
     <>
       {isLoading === true && (
@@ -150,8 +150,8 @@ export default function User() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dataArray.map((data) => (
-                <TableRow key={data._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              {tableData.map((data) => (
+                <TableRow key={data.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row">
                     {data.id}
                   </TableCell>
@@ -161,6 +161,7 @@ export default function User() {
                     {moment(data.date).format('YYYY-MM-DD HH:mm')}
                   </TableCell>
                   <TableCell align="right">{data.access}</TableCell>
+                  <TableCell align="right">{data.ip}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
