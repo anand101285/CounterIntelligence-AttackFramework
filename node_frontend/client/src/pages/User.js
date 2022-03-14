@@ -10,6 +10,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { sentenceCase } from 'change-case';
+import Label from '../components/Label';
 
 import { AuthContext } from '../context/auth-context';
 // ----------------------------------------------------------------------
@@ -87,7 +89,7 @@ export default function User() {
         id = data._id;
         type = data.type;
         if (type === 'worddoc') ext = '.docs';
-        else ext = '.xmle';
+        else ext = '.xlsm';
         date = data.created_at;
         for (let i = 0; i < accessed.length; i += 1) {
           console.log('id:', id, ' acc:', accessed[i].token_id);
@@ -142,11 +144,11 @@ export default function User() {
             <TableHead>
               <TableRow>
                 <TableCell>Tokenid</TableCell>
-                <TableCell align="right">File Type</TableCell>
-                <TableCell align="right">Extension</TableCell>
-                <TableCell align="right">Uploaded on</TableCell>
-                <TableCell align="right">Accessed</TableCell>
-                <TableCell align="right">Hacker's Ip</TableCell>
+                <TableCell align="center">File Type</TableCell>
+                <TableCell align="center">Extension</TableCell>
+                <TableCell align="center">Uploaded on</TableCell>
+                <TableCell align="center">Accessed</TableCell>
+                <TableCell align="center">Hacker's Ip</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -155,13 +157,20 @@ export default function User() {
                   <TableCell component="th" scope="row">
                     {data.id}
                   </TableCell>
-                  <TableCell align="right">{data.type}</TableCell>
-                  <TableCell align="right">{data.ext}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">{data.type}</TableCell>
+                  <TableCell align="center">{data.ext}</TableCell>
+                  <TableCell align="center">
                     {moment(data.date).format('YYYY-MM-DD HH:mm')}
                   </TableCell>
-                  <TableCell align="right">{data.access}</TableCell>
-                  <TableCell align="right">{data.ip}</TableCell>
+                  <TableCell align="center">
+                    <Label
+                      variant="ghost"
+                      color={(data.access === 'Accessed' && 'error') || 'success'}
+                    >
+                      {sentenceCase(data.access)}
+                    </Label>
+                  </TableCell>
+                  <TableCell align="center">{data.ip}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
