@@ -14,6 +14,8 @@ mongoose.connect(url_db, (err) => {
 const User = require("../../models/User");
 const Token = require("../../models/Tokens");
 const TokenAccess = require("../../models/TokenAccess");
+const serverdata = require("./serverConfig");
+const serverip = serverdata.url_toping;
 
 router.post("/:type", (req, res) => {
   //getting the session id from front end user logged in
@@ -26,11 +28,11 @@ router.post("/:type", (req, res) => {
     body += chunk;
   });
   req.on("end", async () => {
-    let jsonbody = JSON.parse(body) ;
+    let jsonbody = JSON.parse(body);
     sessionid = jsonbody.sessionid;
 
     if (req.params.type == "worddoc") {
-      const current_ip = ip.address();
+      const current_ip = serverip;
 
       const newtoken = new Token({
         type: req.params.type,
@@ -55,7 +57,7 @@ router.post("/:type", (req, res) => {
                     __dirname +
                       "\\..\\..\\..\\python_backend\\webdoc_using_link.py",
                     "--url",
-                    current_ip + ":5000",
+                    current_ip,
                     "--sessionid",
                     doc._id,
                     "--docname",
@@ -90,7 +92,7 @@ router.post("/:type", (req, res) => {
       });
     } else if (req.params.type == "excel_vba") {
       try {
-        const current_ip = ip.address();
+        const current_ip = serverip;
         // let token_id = await insertTokenGeneratedData(req.params.type, sessionid);
         const newtoken = new Token({
           type: req.params.type,
@@ -103,7 +105,7 @@ router.post("/:type", (req, res) => {
             User.findOneAndUpdate(
               { _id: sessionid },
               { $push: { tokens: doc._id } },
-              (err, doc) => {
+              (err, doc1) => {
                 if (err) console.log(err);
                 else {
                   const excel_vba = spawn("python", [
@@ -114,7 +116,7 @@ router.post("/:type", (req, res) => {
                     "--sessionid",
                     doc._id,
                     "--url",
-                    current_ip + ":5000",
+                    current_ip,
                   ]);
 
                   //on execution
@@ -155,7 +157,8 @@ router.post("/:type", (req, res) => {
 router.get("/ping/:tokenid", (req, res) => {
   let tokenid = req.params.tokenid;
 
-  let attacker_ip = res.socket.remoteAddress;
+  // let attacker_ip = res.socket.remoteAddress;
+  let attacker_ip = req.headers["x-forwarded-for"];
 
   // //filtering only the ip address
   attacker_ip = attacker_ip.replace("::ffff:", "");
