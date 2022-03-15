@@ -1,5 +1,5 @@
 const data = {
-  url_toping: "b4e1-111-68-99-41.ngrok.io",
+  url_toping: "d233-115-186-152-101.ngrok.io",
 };
 
 module.exports = data;
