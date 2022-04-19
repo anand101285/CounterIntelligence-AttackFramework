@@ -68,7 +68,17 @@
     "simplebar": "^5.3.5",
     "simplebar-react": "^2.3.5",
     "web-vitals": "^2.1.0",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "react-spring": "^8.0.20",
+    "mapbox-gl": "^2.6.1",
+    "@turf/bbox": "^6.0.1",
+    "@turf/helpers": "^6.1.4",
+    "d3": "^5.9.2",
+    "deck.gl": "^7.0.8",
+    "lodash.pick": "^4.4.0",
+    "memoizee": "^0.4.14",
+    "react-floaterjs": "^1.0.6",
+    "react-map-gl": "^4.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",

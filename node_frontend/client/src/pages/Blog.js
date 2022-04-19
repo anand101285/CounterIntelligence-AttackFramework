@@ -1,98 +1,117 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { Style, Icon } from 'ol/style';
-import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
-import { fromLonLat, get } from 'ol/proj';
+import React, { useCallback } from 'react';
+import { FlyToInterpolator } from 'react-map-gl';
+import { LinearInterpolator } from '@deck.gl/core';
 
 // material
 import { Container, Stack, Typography } from '@mui/material';
 
-import Map from '../maps/Map';
-import { Layers, TileLayer, VectorLayer } from '../maps/Layers';
-import { osm, vector } from '../maps/Source';
-
-import mapConfig from '../maps/config.json';
-import '../maps/maps.css';
-
 // components
 import Page from '../components/Page';
 
-// const markersLonLat = [
-//   [73.135, 31.4504],
-//   [74.3587, 31.5204],
-//   [70.9019, 31.8626]
-// ];
+import Map from '../map/Map';
 
-function addMarkers(lonLatArray) {
-  console.log(lonLatArray);
-  const iconStyle = new Style({
-    image: new Icon({
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'pixels',
-      src: mapConfig.markerImage32
-    })
-  });
-  const features = lonLatArray.map((item) => {
-    const feature = new Feature({
-      geometry: new Point(fromLonLat(item))
-    });
-    feature.setStyle(iconStyle);
-    return feature;
-  });
-  return features;
-}
+const INITIAL_VIEW_STATE = {
+  latitude: 30.3753,
+  longitude: 69.3451,
+  zoom: 5,
+  pitch: 60,
+  bearing: 0
+};
 
-// ----------------------------------------------------------------------
+const data = [
+  {
+    id: 0,
+    state: 'Lincoln Park',
+    coordinates: [67.0104, 24.8608]
+  },
+  {
+    id: 1,
+    state: 'Burnham Park',
+    coordinates: [74.35071, 31.558]
+  },
+  {
+    id: 2,
+    state: 'Millennium Park',
+    coordinates: [73.08969, 31.41554]
+  },
+  {
+    id: 3,
+    state: 'Grant Park',
+    coordinates: [73.0479, 33.59733]
+  },
+  {
+    id: 4,
+    state: 'Humboldt Park',
+    coordinates: [71.47824, 30.19679]
+  },
+  {
+    id: 5,
+    state: 'Delhi',
+    coordinates: [77.1025, 28.7041]
+  }
+];
 
 export default function Blog() {
-  const [center, setCenter] = useState(mapConfig.center);
-  const [zoom, setZoom] = useState(5);
-  const [markersLonLat, setmarkersLonLat] = useState(null);
-  const [features, setFeatures] = useState();
-  const id = 1;
+  const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
+  const handleChangeViewState = ({ viewState }) => setViewState(viewState);
+  const handleFlyTo = (destination) =>
+    setViewState({
+      ...viewState,
+      ...destination,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator()
+    });
 
-  const getIp = async () => {
-    try {
-      console.log('sending');
-      const response = await axios({
-        url: 'http://localhost:5000/api/database/token/attacks',
-        method: 'GET'
-      });
-      console.log(response.data);
-      setmarkersLonLat(response.data);
-      setFeatures(addMarkers(response.data));
-      // console.log(comp);
-    } catch (err) {
-      console.error(err.response.data);
-    }
-  };
+  const [radius, setRadius] = React.useState(15);
+  const handleToggleRadius = () => setRadius(radius > 0 ? 0 : Math.random() * 35 + 5);
 
-  useEffect(() => {
-    getIp();
-  }, [id]);
+  const [arcsEnabled, setArcsEnabled] = React.useState(true);
+  const handleToggleArcs = () => setArcsEnabled(!arcsEnabled);
+
+  const transitionInterpolator = new LinearInterpolator();
+  const rotateCamera = useCallback(() => {
+    setViewState((viewState) => ({
+      ...viewState,
+      bearing: viewState.bearing + 360,
+      transitionDuration: 50000,
+      transitionInterpolator,
+      onTransitionEnd: rotateCamera
+    }));
+  }, []);
 
   return (
     <>
-      {markersLonLat !== null && (
-        <Page title="Dashboard: Blog | Minimal-UI">
-          <Container>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-              <Typography variant="h4" gutterBottom>
-                Track Beacons
-              </Typography>
-            </Stack>
-            <div>
+      {/* {markersLonLat !== null && ( */}
+      <Page title="Dashboard: Blog | Minimal-UI">
+        <Container>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Typography variant="h4" gutterBottom>
+              Track Beacons
+            </Typography>
+          </Stack>
+          {/* <div>
               <Map center={fromLonLat(center)} zoom={zoom}>
                 <Layers>
                   <TileLayer source={osm()} zIndex={0} />
                   <VectorLayer source={vector({ features })} />
                 </Layers>
               </Map>
-            </div>
-          </Container>
-        </Page>
-      )}
+            </div> */}
+          <div>
+            <Map
+              width="77vw"
+              height="70vh"
+              viewState={viewState}
+              onViewStateChange={handleChangeViewState}
+              libraries={data}
+              radius={radius}
+              arcsEnabled={arcsEnabled}
+              rotateCamera={rotateCamera}
+            />
+          </div>
+        </Container>
+      </Page>
+      {/* )} */}
     </>
   );
 }
