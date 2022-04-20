@@ -1,5 +1,5 @@
+import { useState, useContext } from 'react';
 import axios from 'axios';
-import { useState } from 'react';
 
 import * as Yup from 'yup';
 import { Icon } from '@iconify/react';
@@ -11,9 +11,12 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
+import { AuthContext } from '../../../context/auth-context';
+
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
+  const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +40,6 @@ export default function RegisterForm() {
     validationSchema: RegisterSchema,
     onSubmit: (values) => {
       registerUser(values);
-      // navigate('/dashboard', { replace: true });
     }
   });
 
@@ -59,7 +61,8 @@ export default function RegisterForm() {
         })
       }).then((response) => {
         console.log(response.data);
-        navigate('/dashboard', { status: { token: response.data }, replace: true });
+        auth.login(response.data.user, response.data.token);
+        navigate('/dashboard/app', { replace: true });
       });
     } catch (err) {
       console.error(err.response.data);

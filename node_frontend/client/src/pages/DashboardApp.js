@@ -25,24 +25,24 @@ export default function DashboardApp() {
   const [xlsm, setexcel] = useState(0);
 
   const auth = useContext(AuthContext);
-  const { userId } = auth;
+  const { user } = auth;
 
   useEffect(() => {
     gettokendata();
     // getgenerated();
     // getaccessed();
-  }, [userId]);
+  }, [user.userId]);
 
   const gettokendata = async () => {
     setisLoading(true);
     try {
       const tokens = await axios({
-        url: `http://localhost:5000/api/database/tokens/stats/${userId}`,
+        url: `http://localhost:5000/api/database/tokens/stats/${user.userId}`,
         method: 'GET'
       });
       setcomp(tokens.data);
       const compromised = await axios({
-        url: `http://localhost:5000/api/database/token/generated/${userId}`,
+        url: `http://localhost:5000/api/database/token/generated/${user.userId}`,
         method: 'GET'
       });
       setaccessed(compromised.data.num_of_access);
@@ -69,7 +69,7 @@ export default function DashboardApp() {
   //   try {
   //     console.log('sending');
   //     const GeneratedToken = await axios({
-  //       url: `http://localhost:5000/api/database/token/generated/${userId}`,
+  //       url: `http://localhost:5000/api/database/token/generated/${user.userId}`,
   //       method: 'GET'
   //     });
   //     console.log('I am here !!!!');

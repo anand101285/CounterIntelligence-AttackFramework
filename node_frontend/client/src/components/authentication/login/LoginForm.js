@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useState, useContext } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import * as Yup from 'yup';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
@@ -24,8 +24,6 @@ import { AuthContext } from '../../../context/auth-context';
 
 export default function LoginForm() {
   const auth = useContext(AuthContext);
-  const [isLoginMode, setIsLoginMode] = useState(true);
-
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -43,7 +41,6 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: (values) => {
       loginUser(values);
-      navigate('/dashboard', { replace: true });
     }
   });
 
@@ -64,8 +61,9 @@ export default function LoginForm() {
           password: values.password
         })
       }).then((response) => {
-        auth.login(response.data.userId, response.data.token);
-        // navigate('/dashboard', { status: { token: response.data }, replace: true });
+        console.log(response);
+        auth.login(response.data.user, response.data.token);
+        navigate('/dashboard/app');
       });
     } catch (err) {
       console.error(err.response.data);

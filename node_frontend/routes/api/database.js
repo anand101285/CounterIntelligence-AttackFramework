@@ -37,7 +37,6 @@ router.get("/tokens/stats/:uid", async (req, res) => {
   let excel = 0;
   try {
     const tokendata = await Token.find({ generated_by: userid });
-    console.log(tokendata);
     tokendata.map((data) => {
       data.type === "worddoc" ? (word += 1) : (excel += 1);
     });
@@ -97,7 +96,6 @@ router.get("/token/compromised/:uid", async (req, res) => {
           const ip = await Attacker.findOne({ _id: token.accessed_by });
           if (ip != null) {
             accessed.push({ token_id: token.token_id, ip: ip.ip });
-            console.log("the id here", token.id, " IP here", ip.ip);
           }
         }
       })
@@ -135,7 +133,6 @@ router.get("/token/attacks", (req, res) => {
           method: "GET",
         });
         ips.push([ax_res.data.longitude, ax_res.data.latitude]);
-        console.log("this is the damn ips", ips);
         return 0;
       })
     ).then((result) => res.send(ips));

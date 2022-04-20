@@ -14,6 +14,7 @@ import { sentenceCase } from 'change-case';
 import Label from '../components/Label';
 
 import { AuthContext } from '../context/auth-context';
+
 // ----------------------------------------------------------------------
 
 export default function User() {
@@ -24,101 +25,65 @@ export default function User() {
   const dataArray = [];
 
   const auth = useContext(AuthContext);
-  const { userId } = auth;
-
-  const getTokendata = async () => {
-    try {
-      setisLoading(true);
-      const response = await axios({
-        url: `http://localhost:5000/api/database/tokens/${userId}`,
-        method: 'GET'
-      });
-
-      settokendata(response.data);
-      console.log('token:  ', response.data);
-      const compromised = await axios({
-        url: `http://localhost:5000/api/database/token/compromised/${userId}`,
-        method: 'GET'
-      });
-      setaccessed(compromised.data);
-      console.log('accessed:  ', compromised.data);
-      setisLoading(false);
-    } catch (err) {
-      console.error(err);
-      setisLoading(false);
-    }
-  };
-
-  // const getTokendata = async () => {
-  //   try {
-  //     console.log('sending');
-  //     axios({
-  //       url: `http://localhost:5000/api/database/tokens/${userId}`,
-  //       method: 'GET'
-  //     }).then((response) => {
-  //       console.log(response.data);
-  //       response.data.map((data) => {
-  //         const { type, ext, createdAt } = data;
-  //         dataArray.push({
-  //           name: 'Worddoc',
-  //           type,
-  //           ext,
-  //           date: createdAt,
-  //           UploadedOn: createdAt,
-  //           accessed: 'Accessed'
-  //         });
-  //         return 0;
-  //       });
-  //       settokendata(dataArray);
-  //     });
-  //   } catch (err) {
-  //     console.error(err.response.data);
-  //   }
-  // };
-
-  const data = () => {
-    let id;
-    let type;
-    let ext;
-    let date;
-    let access;
-    let ip;
-    Promise.all(
-      tokendata.map(async (data) => {
-        console.log(data);
-        id = data._id;
-        type = data.type;
-        if (type === 'worddoc') ext = '.docs';
-        else ext = '.xlsm';
-        date = data.created_at;
-        for (let i = 0; i < accessed.length; i += 1) {
-          console.log('id:', id, ' acc:', accessed[i].token_id);
-          if (id === accessed[i].token_id) {
-            access = 'Accessed';
-            ip = accessed[i].ip;
-            break;
-          } else {
-            access = 'Not Accessed';
-            ip = '-';
-          }
-        }
-
-        dataArray.push({ id, type, ext, date, access, ip });
-        console.log(id, type, ext, date, access, ip);
-        // console.log(dataArray);
-        return 0;
-      })
-    ).then((re) => {
-      settableData(dataArray);
-    });
-  };
+  const { user } = auth;
 
   useEffect(() => {
+    const getTokendata = async () => {
+      try {
+        setisLoading(true);
+        const response = await axios({
+          url: `http://localhost:5000/api/database/tokens/${user.userId}`,
+          method: 'GET'
+        });
+
+        settokendata(response.data);
+        const compromised = await axios({
+          url: `http://localhost:5000/api/database/token/compromised/${user.userId}`,
+          method: 'GET'
+        });
+        setaccessed(compromised.data);
+        setisLoading(false);
+      } catch (err) {
+        console.error(err);
+        setisLoading(false);
+      }
+    };
     getTokendata();
-    console.log('hello i am here?');
-  }, [userId]);
+  }, [user.userId]);
 
   useEffect(() => {
+    const data = () => {
+      let id;
+      let type;
+      let ext;
+      let date;
+      let access;
+      let ip;
+      Promise.all(
+        tokendata.map(async (data) => {
+          id = data._id;
+          type = data.type;
+          if (type === 'worddoc') ext = '.docs';
+          else ext = '.xlsm';
+          date = data.created_at;
+          for (let i = 0; i < accessed.length; i += 1) {
+            if (id === accessed[i].token_id) {
+              access = 'Accessed';
+              ip = accessed[i].ip;
+              break;
+            } else {
+              access = 'Not Accessed';
+              ip = '-';
+            }
+          }
+
+          dataArray.push({ id, type, ext, date, access, ip });
+          return 0;
+        })
+      ).then(() => {
+        settableData(dataArray);
+      });
+    };
     data();
   }, [accessed]);
   return (
@@ -128,8 +93,6 @@ export default function User() {
           sx={{
             display: 'flex',
             justifyContent: 'center'
-            // alignItems: 'center'
-            // alignContent: 'center'
           }}
         >
           <CircularProgress size={55} thickness={3} />

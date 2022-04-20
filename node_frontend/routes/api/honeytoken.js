@@ -49,7 +49,6 @@ router.post("/:type", (req, res) => {
               if (err) console.log(err);
               else {
                 console.log("[+] data inserted");
-                console.log(data);
                 try {
                   let filename = "webbug_exploit";
 
@@ -70,7 +69,7 @@ router.post("/:type", (req, res) => {
 
                   //on error the message is displayed , python script was not findinf the proper directory
                   python.stderr.on("data", (data) => {
-                    console.log("error here");
+
                     console.log(data.toString());
                   });
 

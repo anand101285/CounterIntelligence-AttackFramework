@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { FlyToInterpolator } from 'react-map-gl';
 import { LinearInterpolator } from '@deck.gl/core';
 
 // material
@@ -54,19 +53,6 @@ const data = [
 export default function Blog() {
   const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
   const handleChangeViewState = ({ viewState }) => setViewState(viewState);
-  const handleFlyTo = (destination) =>
-    setViewState({
-      ...viewState,
-      ...destination,
-      transitionDuration: 2000,
-      transitionInterpolator: new FlyToInterpolator()
-    });
-
-  const [radius, setRadius] = React.useState(15);
-  const handleToggleRadius = () => setRadius(radius > 0 ? 0 : Math.random() * 35 + 5);
-
-  const [arcsEnabled, setArcsEnabled] = React.useState(true);
-  const handleToggleArcs = () => setArcsEnabled(!arcsEnabled);
 
   const transitionInterpolator = new LinearInterpolator();
   const rotateCamera = useCallback(() => {
@@ -81,7 +67,6 @@ export default function Blog() {
 
   return (
     <>
-      {/* {markersLonLat !== null && ( */}
       <Page title="Dashboard: Blog | Minimal-UI">
         <Container>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -89,14 +74,6 @@ export default function Blog() {
               Track Beacons
             </Typography>
           </Stack>
-          {/* <div>
-              <Map center={fromLonLat(center)} zoom={zoom}>
-                <Layers>
-                  <TileLayer source={osm()} zIndex={0} />
-                  <VectorLayer source={vector({ features })} />
-                </Layers>
-              </Map>
-            </div> */}
           <div>
             <Map
               width="77vw"
@@ -104,14 +81,11 @@ export default function Blog() {
               viewState={viewState}
               onViewStateChange={handleChangeViewState}
               libraries={data}
-              radius={radius}
-              arcsEnabled={arcsEnabled}
               rotateCamera={rotateCamera}
             />
           </div>
         </Container>
       </Page>
-      {/* )} */}
     </>
   );
 }

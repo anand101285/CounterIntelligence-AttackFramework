@@ -5,7 +5,7 @@ const router = express.Router();
 const url_db =
   "mongodb+srv://cicaf2021:Counterintelligenceattack2021@cluster0.vscuv.mongodb.net/CounterAttackdb?retryWrites=true&w=majority";
 mongoose.connect(url_db, (err) =>
-  err ? console.log(err) : console.log("[+] connected to mongo")
+  err ? console.log("bloody error", err) : console.log("[+] connected to mongo")
 );
 
 router.get("/", (req, res) => {

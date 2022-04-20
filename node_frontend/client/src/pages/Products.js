@@ -34,7 +34,7 @@ export default function EcommerceShop() {
         url: 'http://localhost:5000/api/honeytoken/worddoc',
         method: 'POST',
         responseType: 'blob', // important
-        data: JSON.stringify({ sessionid: auth.userId })
+        data: JSON.stringify({ sessionid: auth.user.userId })
       }).then((response) => {
         FileDownload(response.data, `${filename}.doc`);
       });
@@ -49,7 +49,7 @@ export default function EcommerceShop() {
         url: 'http://localhost:5000/api/honeytoken/excel_vba',
         method: 'POST',
         responseType: 'blob', // important
-        data: JSON.stringify({ sessionid: auth.userId })
+        data: JSON.stringify({ sessionid: auth.user.userId })
       }).then((response) => {
         console.log(response);
         FileDownload(response.data, `${filename}.xlsm`);

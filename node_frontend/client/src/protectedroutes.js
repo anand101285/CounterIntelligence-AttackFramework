@@ -1,27 +1,16 @@
-import { Navigate, useRoutes } from 'react-router-dom';
-// layouts
-import DashboardLayout from './layouts/dashboard';
-//
-import DashboardApp from './pages/DashboardApp';
-import Products from './pages/Products';
-import Blog from './pages/Blog';
-import User from './pages/User';
+import { useContext } from 'react';
+import { useLocation, Navigate } from 'react-router-dom';
 
-// ----------------------------------------------------------------------
+import { AuthContext } from './context/auth-context';
 
-const ProtectedRoute = () =>
-  useRoutes([
-    {
-      path: '/dashboard',
-      element: <DashboardLayout />,
-      children: [
-        { element: <Navigate to="/dashboard/app" replace /> },
-        { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> }
-      ]
-    }
-  ]);
+function ProtectedRoute({ children }) {
+  const auth = useContext(AuthContext);
+  console.log('Fucker logged in ', auth.isLoggedIn);
+  const location = useLocation();
 
+  if (auth.isLoggedIn) {
+    return children;
+  }
+  return <Navigate to="/login" state={{ from: location }} replace />;
+}
 export default ProtectedRoute;

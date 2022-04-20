@@ -2,13 +2,8 @@ import React from 'react';
 import MapGL from 'react-map-gl';
 import { DeckGL, ScatterplotLayer } from 'deck.gl';
 import { Spring } from 'react-spring/renderprops';
-// import Goo from "./goodies/Goo";
-// import { easeBackOut, pairs, shuffle, easeBackInOut } from 'd3';
-// import { lineString } from "@turf/helpers";
 import { IconLayer } from '@deck.gl/layers';
-// import ReactFloaterJs from "react-floaterjs";
 import ArcBrushingLayer from './goodies/ArcBrushingLayer';
-// import marker_svg from './assests/marker.png';
 
 const MAPBOX_TOKEN =
   'pk.eyJ1IjoiaGVsbG8xMjMwMDAwIiwiYSI6ImNsMTY5enExbDE1MDQzaW10aXNldHppbm0ifQ.AMRrzL3F4vjcev9lVoXjBw';
@@ -23,7 +18,6 @@ export default function Map({
   viewState,
   onViewStateChange,
   libraries,
-  radius,
   rotateCamera
 }) {
   return (
@@ -36,9 +30,6 @@ export default function Map({
       onViewStateChange={onViewStateChange}
       mapboxApiAccessToken={MAPBOX_TOKEN}
     >
-      {/*
-    You need to add movement in arc via variation in color to show the movement of the attacks
-*/}
       <Spring
         from={{ arcCoef: 1e-10 }}
         to={{ arcCoef: 1 }}
@@ -51,15 +42,9 @@ export default function Map({
               id: 'scatterplot-layer',
               data: libraries,
               getPosition: (d) => d.coordinates,
-              getRadius: 500 * radius,
+              getRadius: 23,
               radiusMaxPixels: 15,
               getFillColor: [255, 99, 71],
-              transitions: {
-                getRadius: {
-                  duration: 1000
-                  // easing: easeBackInOut
-                }
-              },
               pickable: true,
               autoHighlight: true
             }),
@@ -67,7 +52,7 @@ export default function Map({
               id: 'arc-layer',
               data: libraries,
               getSourcePosition: (d) => d.coordinates,
-              getTargetPosition: (d) => [73.135, 31.4504],
+              getTargetPosition: () => [73.135, 31.4504],
               getSourceColor: [255, 0, 128],
               getTargetColor: [0, 200, 255],
               getWidth: 6,
@@ -78,19 +63,16 @@ export default function Map({
               id: 'icon-layer',
               data: libraries,
               pickable: true,
-              // iconAtlas and iconMapping are required
-              // getIcon: return a string
               iconAtlas: 'https://img.icons8.com/ios/344/marker--v1.png',
               iconMapping: ICON_MAPPING,
-              getIcon: (d) => 'marker',
+              getIcon: () => 'marker',
               sizeScale: 14,
               getKey: (d) => d.id,
               getPosition: (d) => d.coordinates,
-              getSize: (d) => 3,
-              getColor: (d) => [255, 0, 0]
+              getSize: () => 3,
+              getColor: () => [255, 0, 0]
             })
           ];
-
           return <DeckGL layers={layers} viewState={viewState} />;
         }}
       </Spring>

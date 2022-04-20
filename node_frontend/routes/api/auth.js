@@ -12,8 +12,8 @@ const Users = require("../../models/Users");
 // @access public
 router.get("/", auth, async (req, res) => {
   try {
-    const users = await Users.findById(req.users.id).select("-password");
-    res.json(users);
+    const user = await Users.findById(req.user.id).select("-password");
+    res.json(user);
   } catch (err) {
     console.log(err.message);
     res.status(500).send("Server Error");
@@ -36,18 +36,15 @@ router.post(
     }
 
     const { email, password } = req.body;
-    console.log(email, password);
     try {
       // see if user exists, send error if yes
-      let users = await Users.findOne({ email });
-      if (!users) {
+      let user = await Users.findOne({ email });
+      if (!user) {
         return res
           .status(400)
           .json({ errors: [{ msg: "Invalid Credentials" }] });
       }
-      console.log(" This is the fucking users", users);
-
-      const isMatch = await bcrypt.compare(password, users.password);
+      const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
         return res
@@ -56,21 +53,26 @@ router.post(
       }
 
       // return json web token
-
+      const payload = {
+        user: {
+          userId: user.id,
+          email: user.email,
+        },
+      };
       let token;
       try {
-        token = jwt.sign(
-          { userId: users.id, email: users.email },
-          "Hiddentoken",
-          { expiresIn: "1h" }
-        );
+        token = jwt.sign(payload, "Hiddentoken", { expiresIn: 1800 });
       } catch (err) {
         return res.status(500).json({ errors: [{ msg: "Login Failed" }] });
       }
 
       res.json({
-        userId: users.id,
-        email: users.email,
+        user: {
+          f_name: user.firstname,
+          l_name: user.lastname,
+          userId: user.id,
+          email: user.email,
+        },
         token: token,
       });
     } catch (err) {

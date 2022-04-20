@@ -57,13 +57,22 @@ router.post(
 
       const payload = {
         user: {
-          id: user.id,
+          userId: user.id,
+          email: user.email,
         },
       };
 
-      jwt.sign(payload, "Hiddentoken", { expiresIn: 3600000 }, (err, token) => {
+      jwt.sign(payload, "Hiddentoken", { expiresIn: 1800 }, (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.json({
+          user: {
+            f_name: user.firstname,
+            l_name: user.lastname,
+            userId: user.id,
+            email: user.email,
+          },
+          token: token,
+        });
       });
     } catch (err) {
       console.log(err.message);
