@@ -5,7 +5,6 @@ import { AuthContext } from './context/auth-context';
 
 function ProtectedRoute({ children }) {
   const auth = useContext(AuthContext);
-  console.log('Fucker logged in ', auth.isLoggedIn);
   const location = useLocation();
 
   if (auth.isLoggedIn) {

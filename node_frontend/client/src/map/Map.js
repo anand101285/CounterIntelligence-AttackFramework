@@ -5,6 +5,7 @@ import { Spring } from 'react-spring/renderprops';
 import { IconLayer } from '@deck.gl/layers';
 import ArcBrushingLayer from './goodies/ArcBrushingLayer';
 
+// Todo add to config
 const MAPBOX_TOKEN =
   'pk.eyJ1IjoiaGVsbG8xMjMwMDAwIiwiYSI6ImNsMTY5enExbDE1MDQzaW10aXNldHppbm0ifQ.AMRrzL3F4vjcev9lVoXjBw';
 

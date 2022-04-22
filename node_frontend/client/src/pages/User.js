@@ -27,10 +27,10 @@ export default function User() {
   const auth = useContext(AuthContext);
   const { user } = auth;
 
+  // setisLoading(true);
   useEffect(() => {
     const getTokendata = async () => {
       try {
-        setisLoading(true);
         const response = await axios({
           url: `http://localhost:5000/api/database/tokens/${user.userId}`,
           method: 'GET'
@@ -49,7 +49,7 @@ export default function User() {
       }
     };
     getTokendata();
-  }, [user.userId]);
+  }, [tokendata]);
 
   useEffect(() => {
     const data = () => {
@@ -101,45 +101,43 @@ export default function User() {
           </Typography>
         </Box>
       )}
-      {isLoading === false && (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Tokenid</TableCell>
-                <TableCell align="center">File Type</TableCell>
-                <TableCell align="center">Extension</TableCell>
-                <TableCell align="center">Uploaded on</TableCell>
-                <TableCell align="center">Accessed</TableCell>
-                <TableCell align="center">Hacker's Ip</TableCell>
+      {/* {isLoading === false && ( */}
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Tokenid</TableCell>
+              <TableCell align="center">File Type</TableCell>
+              <TableCell align="center">Extension</TableCell>
+              <TableCell align="center">Uploaded on</TableCell>
+              <TableCell align="center">Accessed</TableCell>
+              <TableCell align="center">Hacker's Ip</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableData.map((data) => (
+              <TableRow key={data.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell component="th" scope="row">
+                  {data.id}
+                </TableCell>
+                <TableCell align="center">{data.type}</TableCell>
+                <TableCell align="center">{data.ext}</TableCell>
+                <TableCell align="center">{moment(data.date).format('YYYY-MM-DD HH:mm')}</TableCell>
+                <TableCell align="center">
+                  <Label
+                    variant="ghost"
+                    color={(data.access === 'Accessed' && 'error') || 'success'}
+                  >
+                    {sentenceCase(data.access)}
+                  </Label>
+                </TableCell>
+                <TableCell align="center">{data.ip}</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((data) => (
-                <TableRow key={data.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row">
-                    {data.id}
-                  </TableCell>
-                  <TableCell align="center">{data.type}</TableCell>
-                  <TableCell align="center">{data.ext}</TableCell>
-                  <TableCell align="center">
-                    {moment(data.date).format('YYYY-MM-DD HH:mm')}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Label
-                      variant="ghost"
-                      color={(data.access === 'Accessed' && 'error') || 'success'}
-                    >
-                      {sentenceCase(data.access)}
-                    </Label>
-                  </TableCell>
-                  <TableCell align="center">{data.ip}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {/* )} */}
     </>
   );
 }
